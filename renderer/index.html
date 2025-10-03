@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>NextView Android Controller</title>
+  <style>
+    :root {
+      --bg: #f5f7fa;
+      --card: #ffffff;
+      --accent: #0d6efd;
+      --muted: #6c757d;
+      --header-bg: #0b2447;
+      --footer-bg: #0b2447;
+      --terminal-bg: #0e1117;
+      --output-bg: #111827;
+    }
+    body {
+      font-family: Inter, Segoe UI, Roboto, Arial, sans-serif;
+      background: var(--bg);
+      margin: 0;
+      color: #111;
+    }
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    /* Header */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--header-bg);
+      color: white;
+      padding: 14px 20px;
+      border-radius: 10px;
+      margin-bottom: 18px;
+    }
+    header .title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    header img {
+      width: 42px;
+      height: 42px;
+      border-radius: 8px;
+      background: linear-gradient(135deg,#0d6efd,#6f42c1);
+    }
+    header h1 {
+      font-size: 20px;
+      margin: 0;
+    }
+    header .developed {
+      font-size: 12px;
+      color: #ddd;
+      margin-top: 2px;
+    }
+
+    /* Layout */
+    .main {
+      display: grid;
+      grid-template-columns: 2fr 1.2fr;
+      gap: 20px;
+    }
+    .card {
+      background: var(--card);
+      padding: 14px 16px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+      margin-bottom: 14px;
+    }
+    label {
+      font-weight: 600;
+      font-size: 13px;
+      margin-bottom: 6px;
+      display: block;
+    }
+    input, select, textarea {
+      font-size: 14px;
+      padding: 6px 8px;
+      border-radius: 8px;
+      border: 1px solid #dfe3e8;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    button {
+      background: var(--accent);
+      color: white;
+      border: none;
+      cursor: pointer;
+      padding: 6px 12px;
+      font-size: 13px;
+      border-radius: 6px;
+      transition: 0.2s;
+      white-space: nowrap;
+    }
+    button:hover { opacity: 0.9; }
+    button.secondary { background: #6c757d; }
+    .row { display: flex; gap: 6px; }
+
+    /* Input + Button in one line */
+    .form-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .form-row input,
+    .form-row textarea {
+      flex: 1;
+    }
+
+    .devices-list {
+      max-height: 120px;
+      overflow: auto;
+      border: 1px solid #e6e9ee;
+      padding: 8px;
+      border-radius: 8px;
+      background: #fafbfc;
+    }
+
+    /* Terminal & Output */
+    .terminal pre, .output pre {
+      font-family: monospace;
+      padding: 12px;
+      height: 250px;
+      overflow-y: auto;
+      border-radius: 8px;
+      margin: 0;
+      font-size: 13px;
+    }
+    .terminal pre {
+      background: var(--terminal-bg);
+      color: #00ff90;
+    }
+    .output pre {
+      background: var(--output-bg);
+      color: #0ff;
+    }
+    #terminalInput {
+      width: 100%;
+      font-family: monospace;
+      padding: 6px;
+      margin-top: 8px;
+      border-radius: 6px;
+      border: 1px solid #ddd;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 12px;
+      margin-top: 20px;
+      font-size: 13px;
+      background: var(--footer-bg);
+      color: #bbb;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="title">
+        <img src="../logo.webp" alt="Logo">
+        <div>
+          <h1>NextView Android Controller Developed By AMIT</h1>
+          <div style="font-size:13px;color:#bbb;">Control Android TV/Devices over ADB</div>
+        </div>
+      </div>
+    </header>
+
+    <div class="main">
+      <!-- LEFT (Controls) -->
+      <section>
+        <!-- ADB SERVER TOP -->
+        <div class="card">
+          <label>ADB Server</label>
+          <div class="row">
+            <button onclick="startServer()">Start</button>
+            <button class="secondary" onclick="killServer()">Kill</button>
+            <button class="secondary" onclick="refreshDevices()">Refresh</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <label>Device IP</label>
+          <div class="form-row">
+            <input id="ipPort" placeholder="192.168.29.221:45283" />
+            <button onclick="connect()">Connect</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <label>Pairing Code</label>
+          <div class="form-row">
+            <input id="pairCode" placeholder="6-digit code" />
+            <button onclick="pair()">Pair</button>
+            <button onclick="pairConnect()" class="secondary">Pair+Connect</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <label>Connected Devices</label>
+          <div class="devices-list" id="devices"></div>
+          <div class="form-row" style="margin-top:6px;">
+            <input id="disconnectTarget" placeholder="ip:port to disconnect" />
+            <button onclick="disconnect()">Disconnect</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <label>APK</label>
+          <div class="form-row">
+            <input id="apkPath" placeholder="No file chosen" readonly />
+            <button onclick="chooseApk()">Choose</button>
+            <button onclick="installApk()" class="secondary">Install</button>
+          </div>
+          <div class="form-row" style="margin-top:6px;">
+            <input id="pkg" placeholder="com.example.app" />
+            <button onclick="uninstallPkg()" class="secondary">Uninstall</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <label>Screen</label>
+          <div class="row">
+            <button onclick="rotate(0)">Portrait</button>
+            <button onclick="rotate(1)" class="secondary">Landscape</button>
+            <button onclick="rotate(2)" class="secondary">Rev Portrait</button>
+            <button onclick="rotate(3)" class="secondary">Rev Land</button>
+            <button onclick="reboot()" class="secondary">Reboot</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <label>Remove Bloatware</label>
+          <div class="form-row">
+            <textarea id="bloat" rows="2" placeholder="com.android.browser, com.example.app"></textarea>
+            <button onclick="removeBloat()">Remove</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT (Terminal) -->
+      <section>
+        <div class="card terminal">
+          <label>Embedded Command Prompt</label>
+          <pre id="terminal">> Ready.</pre>
+          <input id="terminalInput" placeholder="Type a command and press Enter..." />
+        </div>
+        <div class="card output">
+          <label>Command Output</label>
+          <pre id="output">Ready.</pre>
+        </div>
+      </section>
+    </div>
+
+    <footer>
+      © 2025 NextView | Developed by Amit
+    </footer>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>
