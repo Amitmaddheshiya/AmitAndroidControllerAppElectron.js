@@ -9,24 +9,33 @@
     "dist": "electron-builder"
   },
   "build": {
-    "appId": "com.nextviewtech.androidcontroller",
-    "productName": "Android Controller",
-    "win": {
-      "icon": "assets/icon.ico",
-      "target": "nsis"
-    }
+  "appId": "com.nextviewtech.androidcontroller",
+  "productName": "NV-A Android Controller",
+  "directories": {
+    "buildResources": "assets"
   },
-  "nsis": {
-    "oneClick": false,
-    "allowToChangeInstallationDirectory": true,
-    "createDesktopShortcut": true,
-    "createStartMenuShortcut": true,
-    "installerIcon": "assets/icon.ico",
-  "uninstallerIcon": "assets/uninstall.ico",
+  "files": [
+    "main.js",
+    "preload.js",
+    "renderer/**/*",
+    "assets/**/*",
+    "package.json"
+  ],
+  "win": {
+    "icon": "assets/icon.ico",
+    "target": "nsis"
+  },
+ "nsis": {
+  "oneClick": false,
+  "allowToChangeInstallationDirectory": true,
+  "createDesktopShortcut": true,
+  "createStartMenuShortcut": true,
+  "shortcutName": "NV-A Android Controller",
+  "installerIcon": "assets/icon.ico",
   "installerHeaderIcon": "assets/icon.ico",
-  "license": "assets/license.txt",
-  "welcomeImage": "assets/installer-background.bmp"
-  },
+  "license": "assets/license.txt"
+}
+},
   "dependencies": {},
   "devDependencies": {
     "electron": "^25.3.0",

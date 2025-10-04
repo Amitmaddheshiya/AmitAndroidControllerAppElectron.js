@@ -15,12 +15,14 @@ function runShell(command) {
   });
 }
 
-// Create main window only after app is ready
+// ✅ Corrected: Handles proper icon path for packaged apps
 function createWindow() {
+  const iconPath = path.join(process.resourcesPath, "assets", "icon.ico");
+
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
-    icon: path.join(__dirname, "assets/icon.ico"),
+    icon: app.isPackaged ? iconPath : path.join(__dirname, "assets/icon.ico"),
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,
@@ -28,7 +30,8 @@ function createWindow() {
     }
   });
 
-  mainWindow.loadFile("renderer/index.html");
+  mainWindow.loadFile(path.join(__dirname, "renderer/index.html"));
+  mainWindow.setMenuBarVisibility(false);
 
   mainWindow.on("closed", () => {
     mainWindow = null;
